@@ -3,10 +3,19 @@ package Employee;
 import java.util.ArrayList;
 import java.util.List;
 
+import dto.Contacts;
+import dto.InfoUsers;
+
 public class Main {
     public static void main(String[] args) {
-        Employee employee = generateData2();
+
+        dto.Main main = new dto.Main();
+        InfoUsers infoUsers = main.generateData();
+
+        Employee employee = mapeo(infoUsers);
+
         System.out.println(employee.toString());
+
 
     }
 
@@ -68,4 +77,45 @@ public class Main {
 
         return employee;
     }
+
+
+    public static Employee mapeo(InfoUsers infoUsers){
+        Employee employee = new Employee();
+        DatosContacto datosContacto = new DatosContacto();
+        Contacts contacts = new Contacts();
+        employee.setNombreCompleto(infoUsers.getFirstName()+" "+infoUsers.getMiddleName()
+                                    +" "+infoUsers.getLastName()+" "+infoUsers.getSecondLastName());
+        employee.setSufijo(infoUsers.getSuffix());
+        if(infoUsers.getContactDetails()!=null){
+            datosContacto.setDatoDeContacto("SI");
+            employee.setDatosContacto(datosContacto);
+        }else{
+            datosContacto.setDatoDeContacto("NO");
+            employee.setDatosContacto(datosContacto);
+        }
+
+        Contact contact = new Contact();
+        contact.setNumber(infoUsers.getContactDetails().getContacts().getNumber());
+        contact.setTypoContacto(infoUsers.getContactDetails().getContacts().getContactDetailType());
+
+        List<Contact> ltsContact = new ArrayList<>();
+        ltsContact.add(contact);
+
+        ContactList contactList = new ContactList();
+        contactList.setLtsContacts(ltsContact);
+
+        datosContacto.setContactList(contactList);
+
+        employee.setDatosContacto(datosContacto);
+
+        Documento documento = new Documento();
+        documento.setTipo(infoUsers.getIdentifyDocuments().getDocumentType().getId());
+        documento.setDescripcion(infoUsers.getIdentifyDocuments().getDocumentType().getNumber().getDescriptionNumber());
+        documento.setNumber(infoUsers.getIdentifyDocuments().getDocumentNumber());
+
+        employee.setDocumento(documento);
+
+        return employee;
+    }
+
 }
